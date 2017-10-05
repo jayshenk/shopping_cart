@@ -34,7 +34,7 @@ class Store extends React.Component {
     this.addToCart(id)
   );
 
-  addToCart = (id) => (
+  updateInventoryQuantities = (id) => (
     this.setState({
       products: this.state.products.map((product) => {
         if (product.id === id) {
@@ -55,6 +55,35 @@ class Store extends React.Component {
         }
       }),
     })
+  );
+
+  addToCart = (id) => {
+    if (!this.isProductInCart(id)) {
+      this.addThisProductToCart(id);
+    }
+
+    this.updateInventoryQuantities(id);
+  };
+
+  isProductInCart = (id) => (
+    this.state.productsInCart.some((product) => (product.id === id))
+  );
+
+  addThisProductToCart = (id) => {
+    const productToAdd = Object.assign({}, this.findProductById(id), {inventory: 0});
+    const freshCart = [...this.state.productsInCart, productToAdd];
+
+    this.setState({
+      productsInCart: [],
+    });
+
+    console.log("----after----");  
+    console.log(this.state.productsInCart);
+    console.log(this.state);
+  };
+
+  findProductById = (id) => (
+    this.state.products.find((product) => (product.id === id))
   );
 
   render() {
