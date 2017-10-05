@@ -20,13 +20,50 @@ class Store extends React.Component {
         "inventory": 5,
       }
     ],
-    productsInCart: [],
+    productsInCart: [
+      {
+        "id": 3,
+        "title": "Charli XCX - Sucker CD",
+        "price": 19.99,
+        "inventory": 3,
+      }
+    ]
   }
+
+  handleAddToCart = (id) => (
+    this.addToCart(id)
+  );
+
+  addToCart = (id) => (
+    this.setState({
+      products: this.state.products.map((product) => {
+        if (product.id === id) {
+          return Object.assign({}, product, {
+            inventory: product.inventory - 1
+          });
+        } else {
+          return product;
+        }
+      }),
+      productsInCart: this.state.productsInCart.map((product) => {
+        if (product.id === id) {
+          return Object.assign({}, product, {
+            inventory: product.inventory + 1
+          });
+        } else {
+          return product;
+        }
+      }),
+    })
+  );
 
   render() {
     return (
       <div>
-        <ProductList products={this.state.products} />
+        <ProductList
+          products={this.state.products}
+          addToCart={this.handleAddToCart}
+        />
         <Cart productsInCart={this.state.productsInCart}/>
       </div>
     );
@@ -38,9 +75,11 @@ class ProductList extends React.Component {
     const products = this.props.products.map((product) => (
       <Product
         id={product.id}
+        key={product.id}
         title={product.title}
         price={product.price}
         inventory={product.inventory}
+        addToCart={this.props.addToCart}
       />
     ));
 
@@ -62,7 +101,11 @@ class Product extends React.Component {
         <span>{this.props.price}</span>
         <span> x </span>
         <span>{this.props.inventory}</span>
-        <AddToCartButton inventory={this.props.inventory} />
+        <AddToCartButton
+          id={this.props.id}
+          inventory={this.props.inventory}
+          addToCart={this.props.addToCart}
+        />
         <hr/>
       </div>
     );
@@ -70,11 +113,15 @@ class Product extends React.Component {
 }
 
 class AddToCartButton extends React.Component {
+  handleAddToCart = () => (
+    this.props.addToCart(this.props.id)
+  )
+
   render() {
     if (this.props.inventory > 0) {
       return (
         <div>
-          <button>Add to Cart</button>
+          <button onClick={this.handleAddToCart}>Add to Cart</button>
         </div>
       );
     } else {
@@ -88,19 +135,19 @@ class AddToCartButton extends React.Component {
 }
 
 class Cart extends React.Component {
-  getTotal = (productsInCart) => (
-    productsInCart.reduce((acc, product) => (
+  getTotal = () => (
+    this.props.productsInCart.reduce((acc, product) => (
       acc += product.inventory * product.price
-    ), 0);
+    ), 0)
   );
 
   render() {
-
+    const total = this.getTotal();
     return (
       <div>
         <h2>Cart</h2>
         <CartList productsInCart={this.props.productsInCart} />
-        <CartTotal />
+        <CartTotal total={total}/>
         <CartCheckout />
       </div>
     );
@@ -109,11 +156,19 @@ class Cart extends React.Component {
 
 class CartList extends React.Component {
   render() {
+    const cartItems = this.props.productsInCart.map((product) => (
+      <CartItem
+        id={product.id}
+        key={product.id}
+        title={product.title}
+        price={product.price}
+        inventory={product.inventory}
+      />
+    ));
+
     return (
       <div>
-        <CartItem />
-        <CartItem />
-        <CartItem />
+        {cartItems}
       </div>
     );
   }
@@ -123,11 +178,11 @@ class CartItem extends React.Component {
   render() {
     return (
       <div>
-        <span>iPad 4 Mini</span>
+        <span>{this.props.title}</span>
         <span> - </span>
-        <span>$500.01</span>
+        <span>{this.props.price}</span>
         <span> x </span>
-        <span>2</span>
+        <span>{this.props.inventory}</span>
       </div>
     );
   }
@@ -137,7 +192,7 @@ class CartTotal extends React.Component {
   render() {
     return (
       <div>
-        <span>Total: $1000</span>
+        <span>Total: {this.props.total}</span>
       </div>
     );
   }
