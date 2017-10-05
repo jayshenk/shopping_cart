@@ -1,9 +1,33 @@
 class Store extends React.Component {
+  state = {
+    products: [
+      {
+        "id": 1,
+        "title": "iPad 4 Mini",
+        "price": 500.01,
+        "inventory": 2,
+      },
+      {
+        "id": 2,
+        "title": "H&M T-Shirt White",
+        "price": 10.99,
+        "inventory": 10,
+      },
+      {
+        "id": 3,
+        "title": "Charli XCX - Sucker CD",
+        "price": 19.99,
+        "inventory": 5,
+      }
+    ],
+    productsInCart: [],
+  }
+
   render() {
     return (
       <div>
-        <ProductList />
-        <Cart />
+        <ProductList products={this.state.products} />
+        <Cart productsInCart={this.state.productsInCart}/>
       </div>
     );
   }
@@ -11,12 +35,19 @@ class Store extends React.Component {
 
 class ProductList extends React.Component {
   render() {
+    const products = this.props.products.map((product) => (
+      <Product
+        id={product.id}
+        title={product.title}
+        price={product.price}
+        inventory={product.inventory}
+      />
+    ));
+
     return (
       <div>
         <h2>Products</h2>
-        <Product />
-        <Product />
-        <Product />
+        {products}
       </div>
     );
   }
@@ -26,12 +57,12 @@ class Product extends React.Component {
   render() {
     return (
       <div>
-        <span>iPad 4 Mini</span>
+        <span>{this.props.title}</span>
         <span> - </span>
-        <span>$500.01</span>
+        <span>{this.props.price}</span>
         <span> x </span>
-        <span>2</span>
-        <AddToCartButton />
+        <span>{this.props.inventory}</span>
+        <AddToCartButton inventory={this.props.inventory} />
         <hr/>
       </div>
     );
@@ -40,20 +71,35 @@ class Product extends React.Component {
 
 class AddToCartButton extends React.Component {
   render() {
-    return (
-      <div>
-        <button>Add to Cart</button>
-      </div>
-    );
+    if (this.props.inventory > 0) {
+      return (
+        <div>
+          <button>Add to Cart</button>
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          <button disabled={true}>Sold Out</button>
+        </div>
+      );
+    }
   }
 }
 
 class Cart extends React.Component {
+  getTotal = (productsInCart) => (
+    productsInCart.reduce((acc, product) => (
+      acc += product.inventory * product.price
+    ), 0);
+  );
+
   render() {
+
     return (
       <div>
         <h2>Cart</h2>
-        <CartList />
+        <CartList productsInCart={this.props.productsInCart} />
         <CartTotal />
         <CartCheckout />
       </div>

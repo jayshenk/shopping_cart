@@ -12,21 +12,34 @@ What should be stateful?
 4. Overall shopping cart component needs state that both product and cart can use
 
 - Store
-  State: { 
-          products: [{id, title, inventory(qty), price}], 
+  State: {
+          products: [{id, title, inventory(qty), price}],
           productsInCart: [{id, title, quantity, price}]
           }
-  Handle: AddToCart, Checkout
+  Handle: AddToCart, clearCart
+
   - ProductList
     Props: { products, }
+
     - Product
+      Props: { product }
+
       - AddToCartButton
-        Props: { product }
-        Action: AddToCart
+        Handle: buttonClick, pass id up to parent
+        Props: { id, quantity, this.handleButtonClick }
+
   - Cart
+    Handle: getTotal
+
     - CartList
-      - CartItem
-    - CartTotal
-    - CartCheckout
       Props: { productsInCart }
+
+      - CartItem
+        Props: { productInCart }
+
+    - CartTotal
+      Props: { total }
+
+    - CartCheckout
+      Props: { clearCart }
       Action: Checkout
