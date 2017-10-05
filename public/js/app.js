@@ -31,62 +31,58 @@ class Store extends React.Component {
   }
 
   handleAddToCart = (id) => (
-    this.addToCart(id)
-  );
+    this.updateInventoryQuantities(id)
+  )
 
-  updateInventoryQuantities = (id) => (
+  updateInventoryQuantities = (id) => {
     this.setState({
-      products: this.state.products.map((product) => {
-        if (product.id === id) {
-          return Object.assign({}, product, {
-            inventory: product.inventory - 1
-          });
-        } else {
-          return product;
-        }
-      }),
-      productsInCart: this.state.productsInCart.map((product) => {
-        if (product.id === id) {
-          return Object.assign({}, product, {
-            inventory: product.inventory + 1
-          });
-        } else {
-          return product;
-        }
-      }),
+      products: this.updatedProductInventories(id),
+      productsInCart: this.updatedProductInCartInventories(id),
     })
-  );
+  }
 
-  addToCart = (id) => {
+  updatedProductInventories = (id) => (
+    this.state.products.map((product) => {
+      if (product.id === id) {
+        return Object.assign({}, product, {
+          inventory: product.inventory - 1
+        });
+      } else {
+        return product;
+      }
+    })
+  )
+
+  updatedProductInCartInventories = (id) => {
+    let freshCart = [...this.state.productsInCart]
+
     if (!this.isProductInCart(id)) {
-      this.addThisProductToCart(id);
+      const productToAdd = Object.assign({}, this.findProductById(id), {inventory: 0});
+      freshCart = freshCart.concat(productToAdd);
     }
 
-    this.updateInventoryQuantities(id);
-  };
+    return freshCart.map((product) => {
+      if (product.id === id) {
+        return Object.assign({}, product, {
+          inventory: product.inventory + 1
+        });
+      } else {
+        return product;
+      }
+    })
+  }
 
   isProductInCart = (id) => (
     this.state.productsInCart.some((product) => (product.id === id))
-  );
-
-  addThisProductToCart = (id) => {
-    const productToAdd = Object.assign({}, this.findProductById(id), {inventory: 0});
-    const freshCart = [...this.state.productsInCart, productToAdd];
-
-    this.setState({
-      productsInCart: [],
-    });
-
-    console.log("----after----");  
-    console.log(this.state.productsInCart);
-    console.log(this.state);
-  };
+  )
 
   findProductById = (id) => (
     this.state.products.find((product) => (product.id === id))
-  );
+  )
 
   render() {
+    console.log(this.state);
+
     return (
       <div>
         <ProductList
