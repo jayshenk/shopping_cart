@@ -13,6 +13,7 @@ class ProductList extends React.Component {
   render() {
     return (
       <div>
+        <h2>Products</h2>
         <Product />
         <Product />
         <Product />
@@ -31,6 +32,7 @@ class Product extends React.Component {
         <span> x </span>
         <span>2</span>
         <AddToCartButton />
+        <hr/>
       </div>
     );
   }
@@ -39,7 +41,9 @@ class Product extends React.Component {
 class AddToCartButton extends React.Component {
   render() {
     return (
-      <button>Add to Cart</button>
+      <div>
+        <button>Add to Cart</button>
+      </div>
     );
   }
 }
@@ -48,6 +52,7 @@ class Cart extends React.Component {
   render() {
     return (
       <div>
+        <h2>Cart</h2>
         <CartList />
         <CartTotal />
         <CartCheckout />
@@ -93,7 +98,11 @@ class CartTotal extends React.Component {
 }
 
 class CartCheckout extends React.Component {
-
+  render() {
+    return (
+      <button>Checkout</button>
+    );
+  }
 }
 
 ReactDOM.render(<Store />, document.getElementById('content'));
