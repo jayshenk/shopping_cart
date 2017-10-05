@@ -1,38 +1,16 @@
 class Store extends React.Component {
   state = {
-    products: [
-      {
-        "id": 1,
-        "title": "iPad 4 Mini",
-        "price": 500.01,
-        "inventory": 2,
-      },
-      {
-        "id": 2,
-        "title": "H&M T-Shirt White",
-        "price": 10.99,
-        "inventory": 10,
-      },
-      {
-        "id": 3,
-        "title": "Charli XCX - Sucker CD",
-        "price": 19.99,
-        "inventory": 5,
-      }
-    ],
-    productsInCart: [
-      {
-        "id": 3,
-        "title": "Charli XCX - Sucker CD",
-        "price": 19.99,
-        "inventory": 3,
-      }
-    ]
+    products: Seed.products,
+    productsInCart: [],
   }
 
   handleAddToCart = (id) => (
     this.updateInventoryQuantities(id)
   )
+
+  handleCheckout = () => {
+    this.emptyCart();
+  }
 
   updateInventoryQuantities = (id) => {
     this.setState({
@@ -80,6 +58,12 @@ class Store extends React.Component {
     this.state.products.find((product) => (product.id === id))
   )
 
+  emptyCart = () => {
+    this.setState({
+      productsInCart: [],
+    });
+  }
+
   render() {
     console.log(this.state);
 
@@ -89,7 +73,10 @@ class Store extends React.Component {
           products={this.state.products}
           addToCart={this.handleAddToCart}
         />
-        <Cart productsInCart={this.state.productsInCart}/>
+        <Cart
+          productsInCart={this.state.productsInCart}
+          handleCheckout={this.handleCheckout}
+        />
       </div>
     );
   }
@@ -163,7 +150,7 @@ class Cart extends React.Component {
   getTotal = () => (
     this.props.productsInCart.reduce((acc, product) => (
       acc += product.inventory * product.price
-    ), 0)
+    ), 0).toFixed(2)
   );
 
   render() {
@@ -173,7 +160,7 @@ class Cart extends React.Component {
         <h2>Cart</h2>
         <CartList productsInCart={this.props.productsInCart} />
         <CartTotal total={total}/>
-        <CartCheckout />
+        <CartCheckout handleCheckout={this.props.handleCheckout} />
       </div>
     );
   }
@@ -226,7 +213,7 @@ class CartTotal extends React.Component {
 class CartCheckout extends React.Component {
   render() {
     return (
-      <button>Checkout</button>
+      <button onClick={this.props.handleCheckout}>Checkout</button>
     );
   }
 }
