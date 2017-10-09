@@ -2,7 +2,12 @@ class Store extends React.Component {
   state = {
     products: Seed.products,
     productsInCart: [],
-    productBeingEdited: {},
+    productBeingEdited: {
+      id: '',
+      title: '',
+      inventory: '',
+      price: '',
+    },
   }
 
   handleAddToCart = (id) => (
@@ -87,7 +92,7 @@ class Store extends React.Component {
           return product;
         }
       });
-      this.setState({ products, productBeingEdited: {} });
+      this.setState({ products, productBeingEdited: { id: '', title: '', inventory: '', price: '', } });
 
     } else {
       const freshProductWithId = Object.assign({}, freshProduct, {id: this.nextId()});
@@ -209,9 +214,9 @@ class EditProductButton extends React.Component {
 
 class ProductForm extends React.Component {
   state = {
-    title: this.props.title || '',
-    inventory: this.props.inventory || '',
-    price: this.props.price || '',
+    title: this.props.title,
+    inventory: this.props.inventory,
+    price: this.props.price,
   }
 
   onTitleChange = (evt) => {
