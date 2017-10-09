@@ -1,0 +1,45 @@
+What should be stateful?
+
+1. Product from JSON
+2. Each product has price and quantity
+  Quantity will be changing in the app
+  Total in the cart will also be a state that will be changing
+  Items in the cart will change
+  Whether an item is sold out
+    Same as qty being 0
+3. Product would have state of its quantity to AddToCartButton
+  AddToCartButton would have prop of qty
+4. Overall shopping cart component needs state that both product and cart can use
+
+- Store
+  State: {
+          products: [{id, title, inventory(qty), price}],
+          productsInCart: [{id, title, quantity, price}]
+          }
+  Handle: AddToCart, clearCart
+
+  - ProductList
+    Props: { products, }
+
+    - Product
+      Props: { product }
+
+      - AddToCartButton
+        Handle: buttonClick, pass id up to parent
+        Props: { id, quantity, this.handleButtonClick }
+
+  - Cart
+    Handle: getTotal
+
+    - CartList
+      Props: { productsInCart }
+
+      - CartItem
+        Props: { productInCart }
+
+    - CartTotal
+      Props: { total }
+
+    - CartCheckout
+      Props: { clearCart }
+      Action: Checkout
