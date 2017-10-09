@@ -73,7 +73,6 @@ class Store extends React.Component {
   }
 
   nextId = () => {
-    debugger
     return Math.max(...this.state.products.map((product) => product.id)) + 1;
   }
 
@@ -233,6 +232,14 @@ class ProductForm extends React.Component {
       title: this.state.title,
       inventory: this.state.inventory,
       price: this.state.price,
+    });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      title: nextProps.title,
+      inventory: nextProps.inventory,
+      price: nextProps.price
     });
   }
 
