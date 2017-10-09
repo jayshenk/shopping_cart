@@ -72,6 +72,33 @@ class Store extends React.Component {
     });
   }
 
+  nextId = () => {
+    debugger
+    return Math.max(...this.state.products.map((product) => product.id)) + 1;
+  }
+
+  onFormSubmit = (freshProduct) => {
+    const current = this.state.productBeingEdited;
+
+    if (current.id) {
+      const products = this.state.products.map((product) => {
+        if (product.id === current.id) {
+          return Object.assign({}, freshProduct, {id: product.id});
+        } else {
+          return product;
+        }
+      });
+      this.setState({ products, productBeingEdited: {} });
+
+    } else {
+      const freshProductWithId = Object.assign({}, freshProduct, {id: this.nextId()});
+
+      this.setState({
+        products: [...this.state.products, freshProductWithId],
+      });
+    }
+  }
+
   render() {
     console.log(this.state);
 
@@ -87,6 +114,7 @@ class Store extends React.Component {
           title={this.state.productBeingEdited.title}
           inventory={this.state.productBeingEdited.inventory}
           price={this.state.productBeingEdited.price}
+          onFormSubmit={this.onFormSubmit}
         />
         <Cart
           productsInCart={this.state.productsInCart}
@@ -200,8 +228,12 @@ class ProductForm extends React.Component {
   }
 
   onFormSubmit = (evt) => {
-    this.props.onFormSubmit(this.state);
     evt.preventDefault();
+    this.props.onFormSubmit({
+      title: this.state.title,
+      inventory: this.state.inventory,
+      price: this.state.price,
+    });
   }
 
   render() {
@@ -230,7 +262,7 @@ class ProductForm extends React.Component {
           />
         </form>
       </div>
-    ); 
+    );
   }
 }
 
