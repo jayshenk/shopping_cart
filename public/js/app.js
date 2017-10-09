@@ -64,6 +64,10 @@ class Store extends React.Component {
     });
   }
 
+  editProduct = (id) => {
+
+  }
+
   render() {
     console.log(this.state);
 
@@ -72,6 +76,7 @@ class Store extends React.Component {
         <ProductList
           products={this.state.products}
           addToCart={this.handleAddToCart}
+          editProduct={this.editProduct}
         />
         <Cart
           productsInCart={this.state.productsInCart}
@@ -92,6 +97,7 @@ class ProductList extends React.Component {
         price={product.price}
         inventory={product.inventory}
         addToCart={this.props.addToCart}
+        editProduct={this.props.editProduct}
       />
     ));
 
@@ -117,6 +123,10 @@ class Product extends React.Component {
           id={this.props.id}
           inventory={this.props.inventory}
           addToCart={this.props.addToCart}
+        />
+        <EditProductButton
+          id={this.props.id}
+          editProduct={this.props.editProduct}
         />
         <hr/>
       </div>
@@ -144,6 +154,24 @@ class AddToCartButton extends React.Component {
       );
     }
   }
+}
+
+class EditProductButton extends React.Component {
+  handleEditProduct = () => {
+    return this.props.editProduct(this.props.id);
+  }
+
+  render() {
+    return (
+      <div>
+        <button onClick={this.handleEditProduct}>Edit Product</button>
+      </div>
+    );
+  }
+}
+
+class ProductForm extends React.Component {
+
 }
 
 class Cart extends React.Component {
