@@ -2,6 +2,7 @@ class Store extends React.Component {
   state = {
     products: Seed.products,
     productsInCart: [],
+    productBeingEdited: {},
   }
 
   handleAddToCart = (id) => (
@@ -65,7 +66,10 @@ class Store extends React.Component {
   }
 
   editProduct = (id) => {
-
+    const product = this.findProductById(id);
+    this.setState({
+      productBeingEdited: product,
+    });
   }
 
   render() {
@@ -77,6 +81,12 @@ class Store extends React.Component {
           products={this.state.products}
           addToCart={this.handleAddToCart}
           editProduct={this.editProduct}
+        />
+        <ProductForm
+          id={this.state.productBeingEdited.id}
+          title={this.state.productBeingEdited.title}
+          inventory={this.state.productBeingEdited.inventory}
+          price={this.state.productBeingEdited.price}
         />
         <Cart
           productsInCart={this.state.productsInCart}
@@ -171,7 +181,57 @@ class EditProductButton extends React.Component {
 }
 
 class ProductForm extends React.Component {
+  state = {
+    title: this.props.title || '',
+    inventory: this.props.inventory || '',
+    price: this.props.price || '',
+  }
 
+  onTitleChange = (evt) => {
+    this.setState({ title: evt.target.value });
+  }
+
+  onInventoryChange = (evt) => {
+    this.setState({ inventory: evt.target.value });
+  }
+
+  onPriceChange = (evt) => {
+    this.setState({ price: evt.target.value });
+  }
+
+  onFormSubmit = (evt) => {
+    this.props.onFormSubmit(this.state);
+    evt.preventDefault();
+  }
+
+  render() {
+    const submitText = this.props.id ? 'Update' : 'Create';
+    return (
+      <div>
+        <form onSubmit={this.onFormSubmit}>
+          <input
+            placeholder='Title'
+            value={this.state.title}
+            onChange={this.onTitleChange}
+          />
+          <input
+            placeholder='Inventory'
+            value={this.state.inventory}
+            onChange={this.onInventoryChange}
+          />
+          <input
+            placeholder='Price'
+            value={this.state.price}
+            onChange={this.onPriceChange}
+          />
+          <input
+            type='submit'
+            value={submitText}
+          />
+        </form>
+      </div>
+    ); 
+  }
 }
 
 class Cart extends React.Component {
